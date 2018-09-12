@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        function getCurrency(cur) {
+            var urlNBP = 'http://api.nbp.pl/api/exchangerates/rates/c/' + cur + '/';
+            var res = 0.0;
+            $.ajax({
+                url: urlNBP,
+                type: 'GET',
+                async: false, //musi być synchronicznie bo inaczej reszta kodu wykona się przed pobraniem tej kwoty
+                dataType: 'json',
+                success: function (data, textStatus, xhr) {
+                    console.log(data['rates'][0]['ask']);
+                    res = data['rates'][0]['ask'];
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log('some kind of error');
+                }
+            });
+            return res;
+        };
+
+        function trade(cur){
+            var val = $('#val').val();
+            var cur = $('#cur').val();
+            var rate = getCurrency(cur);
+            var result =  val * rate;
+
+            document.getElementById("demo").innerHTML = result;
+            
+            console.log(result)
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <h1>WebAPI AJAX - trade PLN to other Currency</h1>
+    <h3>Based on API provided by NBP</h3>
+    <label>Value</label>
+    <input type="number" id="val" value="5">
+    <br>
+    <label>Currency</label>
+    <input type="text" id="cur" value="EUR">
+    <br>
+    <input type="button" id="button" value="GetApi" onclick="trade()" />
+
+    <h2>wynik:<p id="demo">AJAX RESULT</p> </h2>
+</body>
+
+</html>
